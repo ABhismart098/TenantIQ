@@ -17,9 +17,11 @@ module.exports = (sequelize, DataTypes) => {
       timestamps: true // optional: true if you want createdAt/updatedAt
     },
     {
-  timestamps: true,
-  createdAt: "created_at",
-  updatedAt: "updated_at"
+      createdAt: "created_at",   // ✅ CRITICAL FIX
+      updatedAt: "updated_at",   // ✅ CRITICAL FIX
+
+      underscored: true
+        
 }
 ,
   );

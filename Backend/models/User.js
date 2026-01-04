@@ -13,26 +13,29 @@ module.exports = (sequelize, DataTypes) => {
       },
       email: {
         type: DataTypes.STRING,
-        unique: true,
+        allowNull: false,
+        unique: true
+      },
+      phone: DataTypes.STRING,
+      password_hash: {
+        type: DataTypes.STRING,
         allowNull: false
-      },
-      phone: {
-        type: DataTypes.STRING
-      },
-      status: {
-        type: DataTypes.ENUM("PENDING", "ACTIVE", "SUSPENDED", "REJECTED"),
-        defaultValue: "PENDING"
       },
       role_id: {
         type: DataTypes.INTEGER,
         allowNull: false
+      },
+      status: {
+        type: DataTypes.ENUM("PENDING", "ACTIVE", "SUSPENDED", "REJECTED"),
+        defaultValue: "PENDING"
       }
     },
     {
       tableName: "users",
-      timestamps: true,
-      createdAt: "created_at",
-      updatedAt: "updated_at"
+      createdAt: "created_at",   // ✅ CRITICAL FIX
+      updatedAt: "updated_at",   // ✅ CRITICAL FIX
+
+      underscored: true
     }
   );
 

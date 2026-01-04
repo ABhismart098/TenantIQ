@@ -1,42 +1,38 @@
 const bcrypt = require("bcryptjs");
-const { User } = require("../../models/index"); // MUST come from index.js
-const { generateToken } = require("../../utils/jwt");
+const { User, Role } = require("../../models");
+const RegisterUserDTO = require("../../Src/dto/auth/register.dto");
 
 exports.registerUser = async (data) => {
-  const { name, email, password, role_id } = data;
+  // 1️⃣ DTO validation / mapping
+  const dto = new RegisterUserDTO(data);
 
-  const existingUser = await User.findOne({ where: { email } });
+  // 2️⃣ Check if user already exists
+  const existingUser = await User.findOne({
+    where: { email: dto.email }
+  });
+
   if (existingUser) {
     throw new Error("User already exists");
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  // 3️⃣ 🔥 ROLE VALIDATION (ADD HERE)
+  const role = await Role.findByPk(dto.role_id);
 
+  if (!role) {
+    throw new Error("Invalid role_id");
+  }
+
+  // 4️⃣ Hash password (FIXED)
+  const hashedPassword = await bcrypt.hash(dto.password, 10);
+
+  // 5️⃣ Create user
   const user = await User.create({
-    name,
-    email,
-    password: hashedPassword,
-    role_id
+    full_name: dto.full_name,
+    email: dto.email,
+    phone: dto.phone,
+    password_hash: hashedPassword,
+    role_id: dto.role_id
   });
-  console.log(user);
-
 
   return user;
-};
-
-exports.loginUser = async (data) => {
-  const { email, password } = data;
-
-  const user = await User.findOne({ where: { email } });
-  if (!user) throw new Error("Invalid credentials");
-
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) throw new Error("Invalid credentials");
-
-  const token = generateToken({
-    id: user.id,
-    role_id: user.role_id
-  });
-
-  return { user, token };
 };

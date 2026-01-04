@@ -1,14 +1,30 @@
 const { verifyToken } = require("../utils/jwt");
 
 module.exports = (req, res, next) => {
-  try {
-    const token = req.headers.authorization?.split(" ")[1];
-    if (!token) return res.status(401).json({ message: "No token provided" });
+  const authHeader = req.headers.authorization;
 
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({
+      success: false,
+      message: "Authorization token missing or invalid"
+    });
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  try {
     const decoded = verifyToken(token);
-    req.user = decoded;
+
+    req.user = {
+      user_id: decoded.id,
+      role_id: decoded.role_id
+    };
+
     next();
   } catch (error) {
-    res.status(401).json({ message: "Invalid token" });
+    return res.status(401).json({
+      success: false,
+      message: "Token is invalid or expired"
+    });
   }
 };
