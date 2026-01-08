@@ -5,36 +5,6 @@ const authController = require("../controllers/auth.controller");
 const validate = require("../../middlewares/validate.middleware");
 
 
-/**
- * @swagger
- * /api/auth/register:
- *   post:
- *     summary: Register a new user
- *     tags: [Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - full_name
- *               - email
- *               - password
- *               - role_id
- *             properties:
- *               full_name:
- *                 type: string
- *               email:
- *                 type: string
- *               password:
- *                 type: string
- *               role_id:
- *                 type: number
- *     responses:
- *       201:
- *         description: User registered successfully
- */
 
 const {
   registerSchema,
@@ -96,7 +66,7 @@ router.post(
 
 /**
  * @swagger
- * /api/auth/login:
+ * /auth/login:
  *   post:
  *     summary: Login user
  *     tags: [Auth]

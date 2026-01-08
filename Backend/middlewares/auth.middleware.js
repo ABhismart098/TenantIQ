@@ -1,12 +1,13 @@
 const { verifyToken } = require("../utils/jwt");
+const { User } = require("../models");
 
-module.exports = (req, res, next) => {
+module.exports = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({
       success: false,
-      message: "Authorization token missing or invalid"
+      message: "Authorization token missing"
     });
   }
 
@@ -15,16 +16,35 @@ module.exports = (req, res, next) => {
   try {
     const decoded = verifyToken(token);
 
+    const user = await User.findOne({
+      where: { user_id: decoded.user_id }
+    });
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    if (!user.is_active) {
+      return res.status(403).json({
+        success: false,
+        message: "Your account is not active"
+      });
+    }
+
     req.user = {
-      user_id: decoded.id,
-      role_id: decoded.role_id
+      user_id: user.user_id,
+      role_id: user.role_id,
+      email: user.email
     };
 
     next();
   } catch (error) {
     return res.status(401).json({
       success: false,
-      message: "Token is invalid or expired"
+      message: "Token invalid or expired"
     });
   }
 };

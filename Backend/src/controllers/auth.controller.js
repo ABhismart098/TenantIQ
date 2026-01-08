@@ -10,7 +10,7 @@ exports.register = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: "User registered successfully",
+      message: "User registered successfully. Awaiting approval",
       data: new UserResponseDTO(user)
     });
   } catch (error) {
@@ -37,4 +37,11 @@ exports.login = async (req, res) => {
       message: error.message
     });
   }
+  // 3️⃣ ACTIVE USER CHECK (VERY IMPORTANT)
+    if (UserResponseDTO.is_active) {
+      return res.status(403).json({
+        success: false,
+        message: "Your account is not active. Please contact admin."
+      });
+    }
 };

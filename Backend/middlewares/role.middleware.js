@@ -1,16 +1,26 @@
-module.exports = (...allowedRoles) => {
+/**
+ * Role-based access control (RBAC) middleware
+ *
+ * Usage:
+ *   roleGuard(ROLE.ADMIN, ROLE.OWNER)
+ *
+ * This middleware must be used AFTER auth.middleware
+ */
+module.exports = (...allowedRoleIds) => {
   return (req, res, next) => {
+    // 1️⃣ Ensure authentication middleware ran
     if (!req.user || !req.user.role_id) {
-      return res.status(403).json({
+      return res.status(401).json({
         success: false,
-        message: "Access denied"
+        message: "Unauthorized: role information missing"
       });
     }
 
-    if (!allowedRoles.includes(req.user.role_id)) {
+    // 2️⃣ Role authorization check
+    if (!allowedRoleIds.includes(req.user.role_id)) {
       return res.status(403).json({
         success: false,
-        message: "You do not have permission"
+        message: "Forbidden: insufficient permissions"
       });
     }
 

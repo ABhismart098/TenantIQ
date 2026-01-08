@@ -4,6 +4,7 @@ const { User, Role } = require("../../models");
 
 const RegisterUserDTO = require("../../Src/dto/auth/register.dto");
 const LoginRequestDTO = require("../../Src/dto/auth/login.dto");
+const { createApprovalRequest } = require("../../services/approval/approval.helper");
 
 /**
  * 🔐 REGISTER USER
@@ -38,6 +39,8 @@ exports.registerUser = async (data) => {
     password_hash: hashedPassword,
     role_id: dto.role_id
   });
+  // 2️⃣ Create approval request
+  await createApprovalRequest(user);
 
   // 6️⃣ Remove sensitive data
   user.password_hash = undefined;
@@ -70,6 +73,10 @@ exports.loginUser = async (data) => {
 
   if (!isPasswordValid) {
     throw new Error("Invalid email or password");
+  }
+  // ✅ BUSINESS RULE HERE
+  if (!user.is_active) {
+    throw new Error("Account is not active");
   }
 
   const token = jwt.sign(

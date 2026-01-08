@@ -1,9 +1,13 @@
 const jwt = require("jsonwebtoken");
 
+const JWT_SECRET = process.env.JWT_SECRET || "tenantiq_secret_key";
+
 exports.generateToken = (payload) => {
-  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.expiresIn });
+  return jwt.sign(payload, JWT_SECRET, {
+    expiresIn: "1d"
+  });
 };
 
 exports.verifyToken = (token) => {
-  return jwt.verify(token, process.env.JWT_SECRET);
+  return jwt.verify(token, JWT_SECRET);
 };

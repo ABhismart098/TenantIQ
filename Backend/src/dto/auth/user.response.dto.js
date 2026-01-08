@@ -6,6 +6,7 @@ class UserResponseDTO {
     this.role_id = user.role_id;
     this.status = user.status;
     this.created_at = user.created_at;
+    
   }
 }
 
