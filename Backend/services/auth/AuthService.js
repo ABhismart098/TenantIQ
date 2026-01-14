@@ -2,18 +2,17 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { User, Role } = require("../../models");
 
-const RegisterUserDTO = require("../../Src/dto/auth/register.dto");
-const LoginRequestDTO = require("../../Src/dto/auth/login.dto");
-const { createApprovalRequest } = require("../../services/approval/approval.helper");
+const RegisterUserDTO = require("../../src/dto/auth/register.dto");
+const LoginRequestDTO = require("../../src/dto/auth/login.dto");
+const { createApprovalRequest } = require("../approval/approval.helper");
 
 /**
  * 🔐 REGISTER USER
  */
 exports.registerUser = async (data) => {
-  // 1️⃣ DTO mapping & validation
   const dto = new RegisterUserDTO(data);
 
-  // 2️⃣ Check if user already exists
+  // Check existing user
   const existingUser = await User.findOne({
     where: { email: dto.email }
   });
@@ -22,28 +21,31 @@ exports.registerUser = async (data) => {
     throw new Error("User already exists");
   }
 
-  // 3️⃣ Validate role
+  // Validate role
   const role = await Role.findByPk(dto.role_id);
   if (!role) {
     throw new Error("Invalid role_id");
   }
 
-  // 4️⃣ Hash password
+  // Hash password
   const hashedPassword = await bcrypt.hash(dto.password, 10);
 
-  // 5️⃣ Create user
+  // Create user
   const user = await User.create({
     full_name: dto.full_name,
     email: dto.email,
     phone: dto.phone,
     password_hash: hashedPassword,
-    role_id: dto.role_id
+    role_id: dto.role_id,
+    is_active: false, // 🔐 default
+    status: "PENDING"
   });
-  // 2️⃣ Create approval request
-  await createApprovalRequest(user);
 
-  // 6️⃣ Remove sensitive data
-  user.password_hash = undefined;
+  // Create approval request
+  await createApprovalRequest({
+    targetUserId: user.user_id,
+    roleId: user.role_id
+  });
 
   return user;
 };
@@ -74,15 +76,18 @@ exports.loginUser = async (data) => {
   if (!isPasswordValid) {
     throw new Error("Invalid email or password");
   }
-  // ✅ BUSINESS RULE HERE
+
+  // 🔐 BUSINESS RULE
   if (!user.is_active) {
-    throw new Error("Account is not active");
+    throw new Error("Your account is not active. Await approval.");
   }
 
+  // ✅ CONSISTENT JWT PAYLOAD
   const token = jwt.sign(
     {
-      userId: user.id,
-      role: user.Role.role_name
+      user_id: user.user_id,
+      role_id: user.Role.role_name,
+      user_satus: user.is_active
     },
     process.env.JWT_SECRET,
     { expiresIn: "1d" }
@@ -91,7 +96,7 @@ exports.loginUser = async (data) => {
   return {
     token,
     user: {
-      id: user.id,
+      user_id: user.user_id,
       full_name: user.full_name,
       email: user.email,
       phone: user.phone,

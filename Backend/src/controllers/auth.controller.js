@@ -1,6 +1,6 @@
 const authService = require("../../services/auth/AuthService");
-const RegisterRequestDTO = require("../dto/auth/register.dto");
-const LoginRequestDTO = require("../dto/auth/login.dto");
+const RegisterRequestDTO = require("../../src/dto/auth/register.dto");
+const LoginRequestDTO = require("../../src/dto/auth/login.dto");
 const UserResponseDTO = require("../dto/auth/user.response.dto");
 
 exports.register = async (req, res) => {
@@ -37,11 +37,4 @@ exports.login = async (req, res) => {
       message: error.message
     });
   }
-  // 3️⃣ ACTIVE USER CHECK (VERY IMPORTANT)
-    if (UserResponseDTO.is_active) {
-      return res.status(403).json({
-        success: false,
-        message: "Your account is not active. Please contact admin."
-      });
-    }
 };
