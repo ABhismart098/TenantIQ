@@ -1,18 +1,44 @@
 module.exports = (sequelize, DataTypes) => {
-  const Approval = sequelize.define("Approval", {
-    approval_id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true
-    },
-    target_user_id: DataTypes.UUID,
-    approved_by: DataTypes.UUID,
-    action: DataTypes.STRING,
-    reason: DataTypes.TEXT
-  }, {
-    tableName: "approvals",
-    underscored: true
-  });
+  const AccountReviewLog = sequelize.define(
+    "AccountReviewLog",
+    {
+      review_id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true
+      },
 
-  return Approval;
+      target_user_id: {
+        type: DataTypes.UUID,
+        allowNull: false
+      },
+
+      reviewed_by: {
+        type: DataTypes.UUID,
+        allowNull: false
+      },
+
+      decision: {
+        type: DataTypes.ENUM("APPROVED", "REJECTED"),
+        allowNull: false
+      },
+
+      reason: {
+        type: DataTypes.TEXT,
+        allowNull: true
+      }
+    },
+    {
+      tableName: "accounts_review_logs",
+
+      // ✅ table has ONLY created_at
+      timestamps: true,
+      createdAt: "created_at",
+      updatedAt: false,
+
+      underscored: true
+    }
+  );
+
+  return AccountReviewLog;
 };

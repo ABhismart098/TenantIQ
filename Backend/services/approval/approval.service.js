@@ -1,75 +1,81 @@
-const { Approval, User } = require("../../models");
+const { AccountReviewLog, User, sequelize } = require("../../models");
+const { ROLE, APPROVAL_RULES } = require("../../Src/constants/approval.rules");
 
-// Role IDs (match roles table)
-const ROLE = {
-  ADMIN: 1,
-  TENANT: 2,
-  PROPERTY_MANAGER: 3,
-  OWNER: 4
-};
+const VALID_DECISIONS = ["APPROVED", "REJECTED"];
 
 exports.processApproval = async (actingUser, dto) => {
-  const { target_user_id, action, reason } = dto;
+  const { target_user_id, action: decision, reason } = dto;
 
-  // 1️⃣ Fetch target user
-  const targetUser = await User.findByPk(target_user_id);
-
-  if (!targetUser) {
-    throw new Error("Target user not found");
+  // 0️⃣ Validate decision early
+  if (!VALID_DECISIONS.includes(decision)) {
+    throw new Error("Invalid decision. Must be APPROVED or REJECTED");
   }
 
-  // 2️⃣ Prevent self-approval
-  if (actingUser.id === targetUser.user_id) {
-    throw new Error("Self approval is not allowed");
-  }
+  return sequelize.transaction(async (t) => {
 
-  // 3️⃣ Only ACTIVE users can approve
-  if (!actingUser.is_active) {
-    throw new Error("Only active users can approve accounts");
-  }
+    // 1️⃣ Fetch target user
+    const targetUser = await User.findByPk(target_user_id, { transaction: t });
 
-  // 4️⃣ Role-based approval rules
-  const approvalMatrix = {
-    [ROLE.TENANT]: [ROLE.OWNER, ROLE.PROPERTY_MANAGER],
-    [ROLE.PROPERTY_MANAGER]: [ROLE.OWNER, ROLE.ADMIN],
-    [ROLE.OWNER]: [ROLE.ADMIN],
-    [ROLE.ADMIN]: [ROLE.ADMIN]
-  };
+    if (!targetUser) {
+      throw new Error("Target user not found");
+    }
 
-  const allowedApprovers = approvalMatrix[targetUser.role_id] || [];
+    // 2️⃣ Prevent self-review
+    if (actingUser.user_id === targetUser.user_id) {
+      throw new Error("Self approval is not allowed");
+    }
 
-  if (!allowedApprovers.includes(actingUser.role_id)) {
-    throw new Error("You are not authorized to approve this account");
-  }
+    // 3️⃣ Only ACTIVE users can review
+    if (!actingUser.is_active) {
+      throw new Error("Only active users can approve or reject accounts");
+    }
 
-  // 5️⃣ Create approval record (AUDIT LOG)
-  const approval = await Approval.create({
-    target_user_id: targetUser.user_id,
-    approved_by: actingUser.id,
-    action,
-    reason
+    // 4️⃣ Prevent re-review of ACTIVE account
+    if (targetUser.status === "ACTIVE") {
+      throw new Error("User already approved");
+    }
+
+    // 5️⃣ Role-based approval rules (SOURCE OF TRUTH)
+    const allowedApprovers = APPROVAL_RULES[targetUser.role_id] || [];
+
+    if (!allowedApprovers.includes(actingUser.role_id)) {
+      throw new Error("You are not authorized to review this account");
+    }
+
+    // 6️⃣ STRICT RULE
+    // OWNER / ADMIN → ONLY ACTIVE ADMIN
+    if (
+      [ROLE.OWNER, ROLE.ADMIN].includes(targetUser.role_id) &&
+      actingUser.role_id !== ROLE.ADMIN
+    ) {
+      throw new Error("Only active admin can review this account");
+    }
+
+    // 7️⃣ Create audit log (IMMUTABLE)
+    const reviewLog = await AccountReviewLog.create(
+      {
+        target_user_id: targetUser.user_id,
+        reviewed_by: actingUser.user_id,
+        decision,
+        reason
+      },
+      { transaction: t }
+    );
+
+    // 8️⃣ Update user account state
+    await targetUser.update(
+      {
+        status: decision === "APPROVED" ? "ACTIVE" : "REJECTED",
+        is_active: decision === "APPROVED"
+      },
+      { transaction: t }
+    );
+
+    return {
+      review_id: reviewLog.review_id,
+      target_user_id: targetUser.user_id,
+      decision,
+      reviewed_by: actingUser.user_id
+    };
   });
-
-  // 6️⃣ If approved → activate user
-  if (action === "APPROVED") {
-    await targetUser.update({
-      status: "ACTIVE",
-      is_active: true
-    });
-  }
-
-  // 7️⃣ If rejected → mark rejected (NOT active)
-  if (action === "REJECTED") {
-    await targetUser.update({
-      status: "REJECTED",
-      is_active: false
-    });
-  }
-
-  return {
-    approval_id: approval.approval_id,
-    target_user: targetUser.user_id,
-    action,
-    approved_by: actingUser.id
-  };
 };

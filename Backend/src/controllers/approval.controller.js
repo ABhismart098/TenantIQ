@@ -6,9 +6,18 @@ exports.approveUser = async (req, res) => {
     const dto = new ApproveRequestDTO(req.body);
     const result = await approvalService.processApproval(req.user, dto);
 
+    let message;
+    if (result.decision === "APPROVED") {
+      message = "User approved successfully";
+    } else if (result.decision === "REJECTED") {
+      message = "User rejected successfully";
+    } else {
+      message = "Approval processed successfully";
+    }
+
     res.json({
       success: true,
-      message: "Approval processed successfully",
+      message,
       data: result
     });
   } catch (err) {
@@ -21,11 +30,10 @@ exports.approveUser = async (req, res) => {
 
 exports.listPendingApprovals = async (req, res) => {
   try {
-    const approvals = await approvalService.getPendingApprovals(req.user);
-
+    const pending = await approvalService.getPendingApprovals(req.user);
     res.json({
       success: true,
-      data: approvals
+      data: pending
     });
   } catch (err) {
     res.status(403).json({

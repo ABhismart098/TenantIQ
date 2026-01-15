@@ -11,7 +11,10 @@ const Bed = require("./Bed")(sequelize, DataTypes);
 const Complaint = require("./Complaint")(sequelize, DataTypes);
 const ComplaintHistory = require("./complaintHistory.model")(sequelize, DataTypes);
 const Comment = require("./comment.model")(sequelize, DataTypes);
-const Approval = require("./approval.model")(sequelize, DataTypes);
+
+// 🔥 UPDATED MODEL
+const AccountReviewLog = require("./approval.model")(sequelize, DataTypes);
+
 const Notification = require("./notification.model")(sequelize, DataTypes);
 
 /* ===================== ASSOCIATIONS ===================== */
@@ -52,9 +55,26 @@ Comment.belongsTo(Complaint, { foreignKey: "complaint_id" });
 User.hasMany(Comment, { foreignKey: "user_id" });
 Comment.belongsTo(User, { foreignKey: "user_id" });
 
-// Approvals
-User.hasMany(Approval, { foreignKey: "requested_user_id" });
-Approval.belongsTo(User, { foreignKey: "requested_user_id" });
+// ✅ Account Review Logs (Approval / Rejection Audit)
+User.hasMany(AccountReviewLog, {
+  foreignKey: "target_user_id",
+  as: "receivedReviews"
+});
+
+User.hasMany(AccountReviewLog, {
+  foreignKey: "reviewed_by",
+  as: "performedReviews"
+});
+
+AccountReviewLog.belongsTo(User, {
+  foreignKey: "target_user_id",
+  as: "targetUser"
+});
+
+AccountReviewLog.belongsTo(User, {
+  foreignKey: "reviewed_by",
+  as: "reviewer"
+});
 
 // Notifications
 User.hasMany(Notification, { foreignKey: "user_id" });
@@ -73,6 +93,9 @@ module.exports = {
   Complaint,
   ComplaintHistory,
   Comment,
-  Approval,
+
+  // 🔑 EXPORT CORRECT MODEL
+  AccountReviewLog,
+
   Notification
 };
