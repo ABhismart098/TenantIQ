@@ -45,4 +45,11 @@ router.post(
   approvalController.approveUser // ✅ MUST be a function
 );
 
+router.get(
+  "/pending",
+  authMiddleware, // ✅ MUST be a function
+  approvalController.listPendingApprovals
+);
+
+
 module.exports = router;
