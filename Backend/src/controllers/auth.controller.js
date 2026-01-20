@@ -1,7 +1,7 @@
 const authService = require("../../services/auth/AuthService");
 const RegisterRequestDTO = require("../../src/dto/auth/register.dto");
 const LoginRequestDTO = require("../../src/dto/auth/login.dto");
-const UserResponseDTO = require("../dto/auth/user.response.dto");
+const UserResponseDTO = require("../dto/Common/user.response.dto");
 
 exports.register = async (req, res) => {
   try {

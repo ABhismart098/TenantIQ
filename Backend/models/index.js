@@ -1,20 +1,30 @@
 const { Sequelize, DataTypes } = require("sequelize");
 const sequelize = require("../Src/config/db");
 
-// Import models (FACTORY STYLE)
+/* ===================== IMPORT MODELS ===================== */
+
+// Core
 const Role = require("./Role")(sequelize, DataTypes);
 const User = require("./User")(sequelize, DataTypes);
+
+// Property hierarchy
 const Property = require("./Property")(sequelize, DataTypes);
 const Floor = require("./Floor")(sequelize, DataTypes);
 const Room = require("./Room")(sequelize, DataTypes);
 const Bed = require("./Bed")(sequelize, DataTypes);
+
+// Complaints
 const Complaint = require("./Complaint")(sequelize, DataTypes);
 const ComplaintHistory = require("./complaintHistory.model")(sequelize, DataTypes);
 const Comment = require("./comment.model")(sequelize, DataTypes);
 
-// 🔥 UPDATED MODEL
+// 🔥 Account approval / rejection audit
 const AccountReviewLog = require("./approval.model")(sequelize, DataTypes);
 
+// 🔥 NEW: Enable / Disable audit
+const UserStatusLog = require("./userStatusLog.model")(sequelize, DataTypes);
+
+// Notifications
 const Notification = require("./notification.model")(sequelize, DataTypes);
 
 /* ===================== ASSOCIATIONS ===================== */
@@ -55,7 +65,8 @@ Comment.belongsTo(Complaint, { foreignKey: "complaint_id" });
 User.hasMany(Comment, { foreignKey: "user_id" });
 Comment.belongsTo(User, { foreignKey: "user_id" });
 
-// ✅ Account Review Logs (Approval / Rejection Audit)
+/* ===================== ACCOUNT REVIEW (APPROVAL) ===================== */
+
 User.hasMany(AccountReviewLog, {
   foreignKey: "target_user_id",
   as: "receivedReviews"
@@ -76,26 +87,48 @@ AccountReviewLog.belongsTo(User, {
   as: "reviewer"
 });
 
-// Notifications
+/* ===================== USER ENABLE / DISABLE ===================== */
+
+User.hasMany(UserStatusLog, {
+  foreignKey: "target_user_id",
+  as: "statusChanges"
+});
+
+UserStatusLog.belongsTo(User, {
+  foreignKey: "target_user_id",
+  as: "targetUser"
+});
+
+UserStatusLog.belongsTo(User, {
+  foreignKey: "performed_by",
+  as: "performedBy"
+});
+
+/* ===================== NOTIFICATIONS ===================== */
+
 User.hasMany(Notification, { foreignKey: "user_id" });
 Notification.belongsTo(User, { foreignKey: "user_id" });
 
 /* ===================== EXPORT ===================== */
+
 module.exports = {
   sequelize,
   Sequelize,
+
   Role,
   User,
+
   Property,
   Floor,
   Room,
   Bed,
+
   Complaint,
   ComplaintHistory,
   Comment,
 
-  // 🔑 EXPORT CORRECT MODEL
-  AccountReviewLog,
+  AccountReviewLog,   // ✅ Approval / Rejection
+  UserStatusLog,      // ✅ Enable / Disable
 
   Notification
 };
