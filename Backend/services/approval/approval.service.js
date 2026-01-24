@@ -1,5 +1,5 @@
 const { AccountReviewLog, User, sequelize } = require("../../models");
-const { ROLE, APPROVAL_RULES } = require("../../Src/constants/approval.rules");
+const { ROLE, APPROVAL_RULES } = require("../../Src/../utils/role-permission");
 
 const VALID_DECISIONS = ["APPROVED", "REJECTED"];
 
