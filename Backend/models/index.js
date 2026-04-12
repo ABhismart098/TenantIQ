@@ -1,4 +1,4 @@
-const { Sequelize, DataTypes } = require("sequelize");
+const { Sequelize, DataTypes, Model } = require("sequelize");
 const sequelize = require("../Src/config/db");
 
 /* ===================== IMPORT MODELS ===================== */
@@ -6,6 +6,9 @@ const sequelize = require("../Src/config/db");
 // Core
 const Role = require("./Role")(sequelize, DataTypes);
 const User = require("./User")(sequelize, DataTypes);
+const ResetPassword = require("./resetPassword.model")(sequelize);
+Model.ResetPassword = ResetPassword;
+
 
 // Property hierarchy
 const Property = require("./Property")(sequelize, DataTypes);
