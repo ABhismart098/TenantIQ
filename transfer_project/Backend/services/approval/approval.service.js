@@ -1,5 +1,6 @@
 const { AccountReviewLog, User, sequelize } = require("../../models");
 const { ROLE, APPROVAL_RULES } = require("../../Src/../utils/role-permission");
+const notificationService = require("../../notification/notification.service");
 
 const VALID_DECISIONS = ["APPROVED", "REJECTED"];
 
@@ -10,6 +11,13 @@ exports.processApproval = async (actingUser, dto) => {
   if (!VALID_DECISIONS.includes(decision)) {
     throw new Error("Invalid decision. Must be APPROVED or REJECTED");
   }
+  await notificationService.sendRealtime({
+  user_id: targetUser.user_id,
+  event: "ACCOUNT_APPROVED",
+  data: {
+    message: "Your account has been approved"
+  }
+});
 
   return sequelize.transaction(async (t) => {
 

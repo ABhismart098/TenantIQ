@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-  const PasswordResetToken = sequelize.define(
-    "PasswordResetToken",
+  const ResetPasswordToken = sequelize.define(
+    "ResetPasswordToken",
     {
       reset_id: {
         type: DataTypes.UUID,
@@ -23,19 +23,16 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false
       },
 
-      used_at: {
-        type: DataTypes.DATE,
-        allowNull: true
+      used: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
       }
     },
     {
-      tableName: "password_reset_tokens",
-      timestamps: true,
-      createdAt: "created_at",
-      updatedAt: false,
-      underscored: true
+      tableName: "reset_password_tokens",
+      timestamps: true
     }
   );
 
-  return PasswordResetToken;
+  return ResetPasswordToken;
 };

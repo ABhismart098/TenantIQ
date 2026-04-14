@@ -22,7 +22,19 @@ router.post(
   validate(loginSchema),
   authController.login
 );
+
+
+
+router.post(
+  "/forgot-password", 
+  authController.forgotPassword);
+
+router.post(
+  "/reset-password", 
+  authController.resetPassword);
 /**
+ * 
+ * 
  * @swagger
  * tags:
  *   name: Auth
@@ -90,6 +102,62 @@ router.post(
  *       401:
  *         description: Invalid credentials
  */
+
+
+/**
+ * @swagger
+ * /auth/forgot-password:
+ *   post:
+ *     summary: Request password reset
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: user@example.com
+ *     responses:
+ *       200:
+ *         description: Reset link sent
+ *       400:
+ *         description: Invalid request
+ */
+
+/**
+ * @swagger
+ * /auth/reset-password:
+ *   post:
+ *     summary: Reset password using token
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - token
+ *               - password
+ *             properties:
+ *               token:
+ *                 type: string
+ *                 example: abc123token
+ *               password:
+ *                 type: string
+ *                 example: newPassword123
+ *     responses:
+ *       200:
+ *         description: Password updated
+ *       400:
+ *         description: Invalid token or expired
+ */
+router.post("/reset-password", authController.resetPassword);
 
 
 module.exports = router;
