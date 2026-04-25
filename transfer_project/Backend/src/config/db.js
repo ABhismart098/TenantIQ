@@ -7,23 +7,25 @@ const sequelize = new Sequelize(
   process.env.DB_PASSWORD,
   {
     host: process.env.DB_HOST,
-    port: Number(process.env.DB_PORT), // ✅ ensure number
+    port: Number(process.env.DB_PORT) || 5432, // ✅ better default for Postgres
     dialect: "postgres",
 
     logging: false,
 
-    // ✅ IMPORTANT for Postgres
     define: {
-      underscored: true,   // created_at instead of createdAt
+      underscored: true,
       timestamps: true
     },
 
-    // ✅ Prevent SSL errors on local
-    dialectOptions: {
-      ssl: process.env.DB_SSL === "true"
-        ? { require: true, rejectUnauthorized: false }
-        : false
-    },
+    dialectOptions:
+      process.env.DB_SSL === "true"
+        ? {
+            ssl: {
+              require: true,
+              rejectUnauthorized: false
+            }
+          }
+        : {},
 
     pool: {
       max: 10,
