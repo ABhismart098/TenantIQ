@@ -90,7 +90,8 @@ A **scalable and modular backend system** for managing tenants, properties, rent
 
 # 🏗️ Architecture Diagram
 
-![Architecture Diagram](./docs/architecture.png)
+![Architecture Diagram](../transfer_project/backend/doc/<img width="1792" height="1402" alt="mermaid-diagram" src="https://github.com/user-attachments/assets/23588b8a-d93a-4b49-ab0c-1e0ceb398498" />
+)
 
 ---
 
