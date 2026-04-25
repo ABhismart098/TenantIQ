@@ -317,6 +317,7 @@ npm run dev
 
 # 📄 License
 
-MIT License
+© 2026 Abhishek Yadav. All rights reserved.
 
----
+This project is for educational and demonstration purposes only.
+Unauthorized use, copying, or distribution is prohibited without permission.
