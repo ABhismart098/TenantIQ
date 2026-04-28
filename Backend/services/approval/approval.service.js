@@ -1,5 +1,6 @@
 const { AccountReviewLog, User, sequelize } = require("../../models");
 const { ROLE, APPROVAL_RULES } = require("../../Src/../utils/role-permission");
+const notificationService = require("../../notification/notification.service");
 
 const VALID_DECISIONS = ["APPROVED", "REJECTED"];
 
@@ -10,6 +11,13 @@ exports.processApproval = async (actingUser, dto) => {
   if (!VALID_DECISIONS.includes(decision)) {
     throw new Error("Invalid decision. Must be APPROVED or REJECTED");
   }
+  await notificationService.sendRealtime({
+  user_id: target_user_id,
+  event: "ACCOUNT_APPROVED",
+  data: {
+    message: "Your account has been approved"
+  }
+});
 
   return sequelize.transaction(async (t) => {
 
@@ -21,7 +29,7 @@ exports.processApproval = async (actingUser, dto) => {
     }
 
     // 2️⃣ Prevent self-review
-    if (actingUser.user_id === targetUser.user_id) {
+    if (actingUser.user_id === target_user_id) {
       throw new Error("Self approval is not allowed");
     }
 
@@ -54,7 +62,7 @@ exports.processApproval = async (actingUser, dto) => {
     // 7️⃣ Create audit log (IMMUTABLE)
     const reviewLog = await AccountReviewLog.create(
       {
-        target_user_id: targetUser.user_id,
+        target_user_id: target_user_id,
         reviewed_by: actingUser.user_id,
         decision,
         reason

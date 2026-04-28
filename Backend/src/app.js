@@ -31,7 +31,10 @@ app.use(express.json());
    HEALTH CHECK
 ======================= */
 app.get("/", (req, res) => {
-  res.send("TenantIQ Backend Running 🚀");
+  res.status(200).json({
+    success: true,
+    message: "TenantIQ Backend Running 🚀"
+  });
 });
 
 /* =======================
@@ -59,16 +62,24 @@ app.use((err, req, res, next) => {
     });
   }
 
+  
+
   return res.status(err.status || 500).json({
     success: false,
     message: err.message || "Internal Server Error"
   });
 });
 
+
+
+
+
+module.exports = app;
+
 /* =======================
    SERVER
 ======================= */
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-});
+// const PORT = process.env.PORT || 4000;
+// app.listen(PORT, () => {
+//   console.log(`🚀 Server running on port ${PORT}`);
+// });

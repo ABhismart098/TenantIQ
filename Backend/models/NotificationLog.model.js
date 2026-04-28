@@ -1,8 +1,8 @@
 module.exports = (sequelize, DataTypes) => {
-  const PasswordResetToken = sequelize.define(
-    "PasswordResetToken",
+  const NotificationLog = sequelize.define(
+    "NotificationLog",
     {
-      reset_id: {
+      log_id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true
@@ -10,26 +10,31 @@ module.exports = (sequelize, DataTypes) => {
 
       user_id: {
         type: DataTypes.UUID,
+        allowNull: true
+      },
+
+      channel: {
+        type: DataTypes.ENUM("EMAIL", "SMS", "PUSH"),
         allowNull: false
       },
 
-      token_hash: {
+      type: {
         type: DataTypes.STRING,
         allowNull: false
       },
 
-      expires_at: {
-        type: DataTypes.DATE,
-        allowNull: false
+      status: {
+        type: DataTypes.ENUM("PENDING", "SENT", "FAILED"),
+        defaultValue: "PENDING"
       },
 
-      used_at: {
-        type: DataTypes.DATE,
+      error_message: {
+        type: DataTypes.TEXT,
         allowNull: true
       }
     },
     {
-      tableName: "password_reset_tokens",
+      tableName: "notification_logs",
       timestamps: true,
       createdAt: "created_at",
       updatedAt: false,
@@ -37,5 +42,5 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  return PasswordResetToken;
+  return NotificationLog;
 };

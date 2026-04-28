@@ -1,8 +1,9 @@
-// dto/auth/forgot-password.request.dto.js
-class ForgotPasswordRequestDTO {
+class ForgotPasswordDTO {
   constructor({ email }) {
-    this.email = email;
+    if (!email) throw new Error("Email is required");
+
+    this.email = email.toLowerCase();
   }
 }
 
-module.exports = ForgotPasswordRequestDTO;
+module.exports = ForgotPasswordDTO;

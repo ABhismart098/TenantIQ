@@ -15,17 +15,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       tableName: "roles",
-      timestamps: true
-    },
-    {
-  
-  createdAt: "created_at",   // ✅ CRITICAL FIX
-      updatedAt: "updated_at",   // ✅ CRITICAL FIX
-
+      timestamps: true,
+      createdAt: "created_at",
+      updatedAt: "updated_at",
       underscored: true
-    
-}
-
+    }
   );
 
   return Role;

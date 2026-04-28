@@ -1,10 +1,12 @@
 module.exports = (schema) => {
   return (req, res, next) => {
+    
     if (!schema || typeof schema.validate !== "function") {
       return res.status(500).json({
         success: false,
         message: "Validation schema is undefined or invalid"
       });
+     
     }
 
     const { error } = schema.validate(req.body);

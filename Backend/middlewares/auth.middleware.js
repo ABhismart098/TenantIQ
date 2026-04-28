@@ -1,6 +1,9 @@
 const { verifyToken } = require("../utils/jwt");
 const { User } = require("../models");
 
+
+
+
 module.exports = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
@@ -17,7 +20,9 @@ module.exports = async (req, res, next) => {
   try {
     // 2️⃣ Verify JWT
     const decoded = verifyToken(token);
+    console.log("VERIFY TOKEN TYPE:", typeof verifyToken);
     console.log("DECODED TOKEN:", decoded);
+    
 
     // ✅ FIX: match JWT payload key
     const user = await User.findOne({

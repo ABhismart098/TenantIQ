@@ -3,6 +3,48 @@ const RegisterRequestDTO = require("../../src/dto/auth/register.dto");
 const LoginRequestDTO = require("../../src/dto/auth/login.dto");
 const UserResponseDTO = require("../dto/Common/user.response.dto");
 
+
+const ForgotPasswordDTO = require("../dto/auth/forgot-password.request.dto");
+const ResetPasswordDTO = require("../dto/auth/reset-password.request.dto");
+
+
+
+exports.forgotPassword = async (req, res) => {
+  try {
+    const dto = new ForgotPasswordDTO(req.body);
+
+    await authService.forgotPassword(dto);
+
+    return res.json({
+      success: true,
+      message: "If email exists, reset link sent"
+    });
+  } catch (err) {
+    return res.status(400).json({
+      success: false,
+      message: err.message
+    });
+  }
+};
+
+exports.resetPassword = async (req, res) => {
+  try {
+    const dto = new ResetPasswordDTO(req.body);
+
+    await authService.resetPassword(dto);
+
+    return res.json({
+      success: true,
+      message: "Password updated successfully"
+    });
+  } catch (err) {
+    return res.status(400).json({
+      success: false,
+      message: err.message
+    });
+  }
+};
+
 exports.register = async (req, res) => {
   try {
     const dto = new RegisterRequestDTO(req.body);

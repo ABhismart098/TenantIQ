@@ -1,42 +1,41 @@
-const { Sequelize, DataTypes, Model } = require("sequelize");
-const sequelize = require("../Src/config/db");
+const { Sequelize, DataTypes } = require("sequelize");
+const sequelize = require("../src/config/db");
 
-/* ===================== IMPORT MODELS ===================== */
+
+/* ===================== LOAD MODELS ===================== */
 
 // Core
 const Role = require("./Role")(sequelize, DataTypes);
 const User = require("./User")(sequelize, DataTypes);
-const ResetPassword = require("./resetPassword.model")(sequelize);
-Model.ResetPassword = ResetPassword;
 
+// ✅ ONLY ONE IMPORT (IMPORTANT)
+const PasswordResetToken = require("./passwordResetToken.model")(sequelize, DataTypes);
 
-// Property hierarchy
+// Property
 const Property = require("./Property")(sequelize, DataTypes);
 const Floor = require("./Floor")(sequelize, DataTypes);
 const Room = require("./Room")(sequelize, DataTypes);
 const Bed = require("./Bed")(sequelize, DataTypes);
 
-// Complaints
+// Complaint
 const Complaint = require("./Complaint")(sequelize, DataTypes);
 const ComplaintHistory = require("./complaintHistory.model")(sequelize, DataTypes);
 const Comment = require("./comment.model")(sequelize, DataTypes);
 
-// 🔥 Account approval / rejection audit
+// Approval / Status
 const AccountReviewLog = require("./approval.model")(sequelize, DataTypes);
-
-// 🔥 NEW: Enable / Disable audit
 const UserStatusLog = require("./userStatusLog.model")(sequelize, DataTypes);
 
-// Notifications
+// Notification
 const Notification = require("./notification.model")(sequelize, DataTypes);
 
 /* ===================== ASSOCIATIONS ===================== */
 
-// Roles & Users
+// Role ↔ User
 Role.hasMany(User, { foreignKey: "role_id" });
 User.belongsTo(Role, { foreignKey: "role_id" });
 
-// Owner → Properties
+// User → Property
 User.hasMany(Property, { foreignKey: "owner_id" });
 Property.belongsTo(User, { foreignKey: "owner_id" });
 
@@ -68,8 +67,7 @@ Comment.belongsTo(Complaint, { foreignKey: "complaint_id" });
 User.hasMany(Comment, { foreignKey: "user_id" });
 Comment.belongsTo(User, { foreignKey: "user_id" });
 
-/* ===================== ACCOUNT REVIEW (APPROVAL) ===================== */
-
+// Approval logs
 User.hasMany(AccountReviewLog, {
   foreignKey: "target_user_id",
   as: "receivedReviews"
@@ -90,8 +88,7 @@ AccountReviewLog.belongsTo(User, {
   as: "reviewer"
 });
 
-/* ===================== USER ENABLE / DISABLE ===================== */
-
+// User status logs
 User.hasMany(UserStatusLog, {
   foreignKey: "target_user_id",
   as: "statusChanges"
@@ -107,31 +104,29 @@ UserStatusLog.belongsTo(User, {
   as: "performedBy"
 });
 
-/* ===================== NOTIFICATIONS ===================== */
-
+// Notifications
 User.hasMany(Notification, { foreignKey: "user_id" });
 Notification.belongsTo(User, { foreignKey: "user_id" });
+
+// ✅ Reset Password relation (ONLY ONCE)
+User.hasMany(PasswordResetToken, { foreignKey: "user_id" });
+PasswordResetToken.belongsTo(User, { foreignKey: "user_id" });
 
 /* ===================== EXPORT ===================== */
 
 module.exports = {
   sequelize,
-  Sequelize,
-
   Role,
   User,
-
+  PasswordResetToken, 
   Property,
   Floor,
   Room,
   Bed,
-
   Complaint,
   ComplaintHistory,
   Comment,
-
-  AccountReviewLog,   // ✅ Approval / Rejection
-  UserStatusLog,      // ✅ Enable / Disable
-
+  AccountReviewLog,
+  UserStatusLog,
   Notification
 };
