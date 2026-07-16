@@ -53,33 +53,3 @@ module.exports = {
     await queryInterface.dropTable("reset_password_tokens");
   }
 };
-
-
-"use strict";
-
-module.exports = {
-  async up(queryInterface, Sequelize) {
-
-    await queryInterface.addConstraint("reset_password_tokens", {
-      fields: ["user_id"],
-      type: "foreign key",
-      name: "fk_reset_token_user",
-      references: {
-        table: "users",
-        field: "user_id"
-      },
-      onDelete: "CASCADE",
-      onUpdate: "CASCADE"
-    });
-
-  },
-
-  async down(queryInterface, Sequelize) {
-
-    await queryInterface.removeConstraint(
-      "reset_password_tokens",
-      "fk_reset_token_user"
-    );
-
-  }
-};

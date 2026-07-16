@@ -1,14 +1,13 @@
 const { Sequelize, DataTypes } = require("sequelize");
 const sequelize = require("../src/config/db");
 
-
 /* ===================== LOAD MODELS ===================== */
 
 // Core
 const Role = require("./Role")(sequelize, DataTypes);
 const User = require("./User")(sequelize, DataTypes);
 
-// ✅ ONLY ONE IMPORT (IMPORTANT)
+// ✅ Make sure file name EXACTLY matches
 const PasswordResetToken = require("./passwordResetToken.model")(sequelize, DataTypes);
 
 // Property
@@ -28,6 +27,7 @@ const UserStatusLog = require("./userStatusLog.model")(sequelize, DataTypes);
 
 // Notification
 const Notification = require("./notification.model")(sequelize, DataTypes);
+const NotificationLog = require("./NotificationLog.model")(sequelize, DataTypes);
 
 /* ===================== ASSOCIATIONS ===================== */
 
@@ -35,11 +35,11 @@ const Notification = require("./notification.model")(sequelize, DataTypes);
 Role.hasMany(User, { foreignKey: "role_id" });
 User.belongsTo(Role, { foreignKey: "role_id" });
 
-// User → Property
+// Property
 User.hasMany(Property, { foreignKey: "owner_id" });
 Property.belongsTo(User, { foreignKey: "owner_id" });
 
-// Property hierarchy
+// Hierarchy
 Property.hasMany(Floor, { foreignKey: "property_id" });
 Floor.belongsTo(Property, { foreignKey: "property_id" });
 
@@ -88,7 +88,7 @@ AccountReviewLog.belongsTo(User, {
   as: "reviewer"
 });
 
-// User status logs
+// Status logs
 User.hasMany(UserStatusLog, {
   foreignKey: "target_user_id",
   as: "statusChanges"
@@ -108,7 +108,7 @@ UserStatusLog.belongsTo(User, {
 User.hasMany(Notification, { foreignKey: "user_id" });
 Notification.belongsTo(User, { foreignKey: "user_id" });
 
-// ✅ Reset Password relation (ONLY ONCE)
+// Reset tokens
 User.hasMany(PasswordResetToken, { foreignKey: "user_id" });
 PasswordResetToken.belongsTo(User, { foreignKey: "user_id" });
 
@@ -116,17 +116,24 @@ PasswordResetToken.belongsTo(User, { foreignKey: "user_id" });
 
 module.exports = {
   sequelize,
+  Sequelize, // ✅ IMPORTANT
+
   Role,
   User,
-  PasswordResetToken, 
+  PasswordResetToken,
+
   Property,
   Floor,
   Room,
   Bed,
+
   Complaint,
   ComplaintHistory,
   Comment,
+
   AccountReviewLog,
   UserStatusLog,
   Notification
+  ,
+  NotificationLog
 };

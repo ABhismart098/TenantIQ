@@ -14,16 +14,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       tableName: "comments",
-      timestamps: true // optional: true if you want createdAt/updatedAt
-    },
-    {
-      createdAt: "created_at",   // ✅ CRITICAL FIX
-      updatedAt: "updated_at",   // ✅ CRITICAL FIX
-
+      timestamps: true,
+      createdAt: "created_at",
+      updatedAt: "updated_at",
       underscored: true
-        
-}
-,
+    }
   );
 
   return Comment;

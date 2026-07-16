@@ -19,20 +19,19 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN,
         defaultValue: false
       }
+      ,
+      user_id: {
+        type: DataTypes.UUID,
+        allowNull: false
+      }
     },
     {
       tableName: "notifications",
-      timestamps: true // tracks createdAt/updatedAt
-    },
-    {
-  
-     createdAt: "created_at",   // ✅ CRITICAL FIX
-      updatedAt: "updated_at",   // ✅ CRITICAL FIX
-
+      timestamps: true,
+      createdAt: "created_at",
+      updatedAt: "updated_at",
       underscored: true
-        
-}
-
+    }
   );
 
   return Notification;

@@ -1,26 +1,27 @@
-/**
- * Role-based access control (RBAC) middleware
- *
- * Usage:
- *   roleGuard(ROLE.ADMIN, ROLE.OWNER)
- *
- * This middleware must be used AFTER auth.middleware
- */
 module.exports = (...allowedRoleIds) => {
   return (req, res, next) => {
-    // 1️⃣ Ensure authentication middleware ran
-    if (!req.user || !req.user.role_id) {
+
+    if (!req.user) {
       return res.status(401).json({
         success: false,
-        message: "Unauthorized: role information missing"
+        message: "Unauthorized"
       });
     }
 
-    // 2️⃣ Role authorization check
-    if (!allowedRoleIds.includes(req.user.role_id)) {
+    if (!req.user.role_id) {
+      return res.status(401).json({
+        success: false,
+        message: "Role data missing"
+      });
+    }
+
+    const userRole = Number(req.user.role_id);
+    const allowed = allowedRoleIds.map(Number);
+
+    if (!allowed.includes(userRole)) {
       return res.status(403).json({
         success: false,
-        message: "Forbidden: insufficient permissions"
+        message: "Forbidden"
       });
     }
 

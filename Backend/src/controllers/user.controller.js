@@ -1,5 +1,5 @@
 const UserStatusRequestDTO = require("../dto/user/user-status.request.dto");
-const userStatusService = require("../../services/user/user-status.service");
+const userStatusService = require("../../services/User/User-status.service");
 
 exports.updateUserStatus = async (req, res) => {
   try {

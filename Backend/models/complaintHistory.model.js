@@ -22,17 +22,9 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       tableName: "complaint_history",
-      timestamps: false
-    },
-    {
-  
-      createdAt: "created_at",   // ✅ CRITICAL FIX
-      updatedAt: "updated_at",   // ✅ CRITICAL FIX
-
+      timestamps: false,
       underscored: true
-        
-}
-
+    }
   );
 
   return ComplaintHistory;

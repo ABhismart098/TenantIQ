@@ -26,9 +26,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       tableName: "reset_password_tokens",
-      timestamps: true,
-      createdAt: "created_at",
-      updatedAt: "updated_at",
+      // The migration creates an insert-only audit table with `created_at` only.
+      timestamps: false,
       underscored: true
     }
   );

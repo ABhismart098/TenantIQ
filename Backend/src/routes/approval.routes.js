@@ -85,12 +85,10 @@ const approvalController = require("../controllers/approval.controller");
  */
 
 
-module.exports = router;
-
 router.post(
   "/action",
-  authMiddleware,               // ✅ MUST be a function
-  approvalController.approveUser // ✅ MUST be a function
+  authMiddleware,     // ✅ FIRST AUTHENTICATE
+  approvalController.approveUser
 );
 
 router.get(

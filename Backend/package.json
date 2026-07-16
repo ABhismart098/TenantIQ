@@ -9,7 +9,7 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "worker": "node src/notification/workers/email.worker.js"
+    "worker": "node notification/workers/email.worker.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",

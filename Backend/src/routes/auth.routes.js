@@ -157,7 +157,4 @@ router.post(
  *       400:
  *         description: Invalid token or expired
  */
-router.post("/reset-password", authController.resetPassword);
-
-
 module.exports = router;

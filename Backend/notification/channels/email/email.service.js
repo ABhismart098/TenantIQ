@@ -37,14 +37,6 @@ const renderTemplate = (templateName, data) => {
     .replace("{{year}}", new Date().getFullYear());
 };
 
-await notificationService.sendRealtime({
-  user_id: user.user_id,
-  event: "PASSWORD_RESET_REQUESTED",
-  data: {
-    message: "Password reset email sent"
-  }
-});
-
 exports.send = async ({ to, subject, template, data }) => {
   const html = renderTemplate(template, data);
 

@@ -53,7 +53,7 @@ exports.register = async (req, res) => {
     res.status(201).json({
       success: true,
       message: "User registered successfully. Awaiting approval",
-      data: new UserResponseDTO(user)
+      data: UserResponseDTO.userResponseDTO(user)
     });
   } catch (error) {
     res.status(400).json({

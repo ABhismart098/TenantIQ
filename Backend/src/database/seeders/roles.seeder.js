@@ -1,19 +1,23 @@
-const { Role } = require("../../models");
+"use strict";
 
-module.exports = async () => {
-  const roles = [
-    { id: 1, name: "ADMIN" },
-    { id: 2, name: "TENANT" },
-    { id: 3, name: "PROPERTY_MANAGER" },
-    { id: 4, name: "OWNER" }
-  ];
+module.exports = {
+  async up(queryInterface) {
+    await queryInterface.sequelize.query(`
+      INSERT INTO roles (role_id, role_name, created_at, updated_at)
+      VALUES
+        (1, 'ADMIN', NOW(), NOW()),
+        (2, 'TENANT', NOW(), NOW()),
+        (3, 'PROPERTY_MANAGER', NOW(), NOW()),
+        (4, 'OWNER', NOW(), NOW())
+      ON CONFLICT (role_id) DO UPDATE SET
+        role_name = EXCLUDED.role_name,
+        updated_at = EXCLUDED.updated_at;
+    `);
+  },
 
-  for (const role of roles) {
-    await Role.findOrCreate({
-      where: { id: role.id },
-      defaults: role
+  async down(queryInterface) {
+    await queryInterface.bulkDelete("roles", {
+      role_id: [1, 2, 3, 4]
     });
   }
-
-  console.log("✅ Roles seeded successfully");
 };

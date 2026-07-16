@@ -1,5 +1,5 @@
 const { User } = require("../../models");
-const { ROLE, APPROVAL_RULES } = require("../../Src/constants/approval.rules");
+const { ROLE, APPROVAL_RULES } = require("../../src/constants/approval.rules");
 
 /**
  * Get role-based pending approvals

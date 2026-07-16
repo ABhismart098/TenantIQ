@@ -17,17 +17,12 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     {
-      tableName: "floors"
-    },
-    {
-  
-      createdAt: "created_at",   // ✅ CRITICAL FIX
-      updatedAt: "updated_at",   // ✅ CRITICAL FIX
-
+      tableName: "floors",
+      timestamps: true,
+      createdAt: "created_at",
+      updatedAt: "updated_at",
       underscored: true
-        
-}
-
+    }
   );
 
   return Floor;

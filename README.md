@@ -2,6 +2,30 @@
 
 A **scalable and modular backend system** for managing tenants, properties, rent operations, grievances, and reporting in a rental management platform.
 
+## Run with Docker
+
+1. Copy `.env.example` to `.env` and set strong `POSTGRES_PASSWORD` and `JWT_SECRET` values.
+2. Start the complete stack:
+
+   ```bash
+   docker compose up --build
+   ```
+
+   The API is available at `http://localhost:4000`, the web frontend at
+   `http://localhost:8080`, PostgreSQL on `localhost:5432`, and Redis is kept
+   internal to Docker. The backend applies Sequelize migrations before it starts.
+
+3. Stop containers while keeping database data:
+
+   ```bash
+   docker compose down
+   ```
+
+   To also remove database and Redis data, use `docker compose down -v`.
+
+Never commit `.env`. Rotate the SMTP app password that was previously stored in
+`Backend/.env` before using this deployment.
+
 ---
 
 ## 🚀 Tech Stack

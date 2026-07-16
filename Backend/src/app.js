@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const sequelize = require("./config/db");
 
 const authRoutes = require("./routes/auth.routes");
@@ -14,6 +15,7 @@ const app = express();
    GLOBAL MIDDLEWARE
 ======================= */
 app.use(express.json());
+app.use(cors());
 
 /* =======================
    DATABASE CONNECTION

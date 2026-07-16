@@ -1,4 +1,4 @@
-const { getIO } = require("../../../socket/socket");
+const { getIO } = require("../../../src/socket/socket");
 
 exports.sendToUser = (userId, event, data) => {
   const io = getIO();

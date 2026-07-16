@@ -1,5 +1,6 @@
 const emailQueue = require("./queue/email.queue");
 const { NotificationLog } = require("../models");
+const websocketService = require("./channels/websocket/websocket.service");
 
 exports.sendEmail = async ({ to, subject, template, data, user_id }) => {
 

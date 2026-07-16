@@ -2,6 +2,7 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
+    if (await queryInterface.tableExists("roles")) return;
     await queryInterface.createTable("roles", {
       role_id: {
         type: Sequelize.INTEGER,
