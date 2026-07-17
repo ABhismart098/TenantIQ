@@ -2,6 +2,42 @@
 
 A **scalable and modular backend system** for managing tenants, properties, rent operations, grievances, and reporting in a rental management platform.
 
+## 🧱 Architecture Principles and Design Direction
+
+This project should remain a **module-based monolith** rather than adopting a distributed architecture by default. The goal is to keep one deployable application with strong internal boundaries, clear module ownership, and clean interfaces.
+
+### SOLID Principles to Follow
+- **Single Responsibility Principle (SRP):** each module, service, controller, or DTO should have one clear purpose.
+- **Open/Closed Principle (OCP):** extend modules through new logic and contracts rather than rewriting existing core behavior.
+- **Liskov Substitution Principle (LSP):** interfaces and service contracts should remain dependable and interchangeable.
+- **Interface Segregation Principle (ISP):** keep contracts focused and avoid forcing unrelated dependencies into a single abstraction.
+- **Dependency Inversion Principle (DIP):** higher-level modules should depend on abstractions and stable interfaces, not on concrete implementations.
+
+### Module-Based Monolith Rules
+- Keep the system as a single deployable application with well-defined internal modules.
+- Each module should own its own routes, controllers, services, DTOs, and data access concerns.
+- Cross-module communication should happen through explicit contracts and shared abstractions.
+- Shared concerns such as authentication, validation, logging, notifications, and audit should live in a shared kernel or common infrastructure layer.
+- Avoid circular dependencies and keep module boundaries clear.
+- Do not introduce microservices or distributed patterns unless the domain complexity clearly justifies it.
+
+### Core Modules
+- **Auth & Access**
+- **User & Role Management**
+- **Property & Ownership**
+- **Complaints & Escalations**
+- **Payments & Billing**
+- **Leads & Approvals**
+- **Notifications & Reporting**
+- **Permissions & Audit**
+
+### Development Guardrails
+- Controllers should stay thin and delegate business logic to services.
+- Services should contain business rules and orchestrate workflows.
+- Routes should focus on HTTP concerns only.
+- DTOs should validate and shape request/response payloads.
+- Keep business logic inside the appropriate module rather than mixing it across layers.
+
 ## Run with Docker
 
 1. Copy `.env.example` to `.env` and set strong `POSTGRES_PASSWORD` and `JWT_SECRET` values.
@@ -25,6 +61,10 @@ A **scalable and modular backend system** for managing tenants, properties, rent
 
 Never commit `.env`. Rotate the SMTP app password that was previously stored in
 `Backend/.env` before using this deployment.
+
+Import `postman/TenantIQ.postman_collection.json` into Postman to test the
+active APIs. Set `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `.env` before starting
+Docker; the startup seed creates or updates that active administrator.
 
 ---
 

@@ -9,8 +9,8 @@ const {
   sequelize,
 } = require("../../models");
 
-const RegisterUserDTO = require("../../src/dto/auth/register.dto");
-const LoginRequestDTO = require("../../src/dto/auth/login.dto");
+const RegisterUserDTO = require("../src/dto/auth/register.dto");
+const LoginRequestDTO = require("../src/dto/auth/login.dto");
 const notificationService = require("../../notification/notification.service");
 
 /* ================= FORGOT PASSWORD ================= */
