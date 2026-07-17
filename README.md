@@ -38,6 +38,10 @@ This project should remain a **module-based monolith** rather than adopting a di
 - DTOs should validate and shape request/response payloads.
 - Keep business logic inside the appropriate module rather than mixing it across layers.
 
+## 🔄 CI/CD Pipeline
+
+GitHub Actions is configured to automatically run backend validation, frontend lint/build checks, and Docker Compose validation on pushes and pull requests. On pushes to `main` or `master`, the workflow also publishes backend and frontend container images to GitHub Container Registry.
+
 ## Run with Docker
 
 1. Copy `.env.example` to `.env` and set strong `POSTGRES_PASSWORD` and `JWT_SECRET` values.

@@ -47,6 +47,14 @@ This project is intended to remain a **module-based monolith** and should be evo
 
 ## Local Testing Steps
 
+### CI/CD Pipeline
+- [x] GitHub Actions workflow added for CI validation
+- [x] Frontend lint and web build included in workflow
+- [x] Backend syntax validation included in workflow
+- [x] Docker Compose validation included in workflow
+- [x] Docker image publishing to GHCR configured for main/master branch pushes
+
+
 ### Backend Setup
 ```bash
 cd Backend
