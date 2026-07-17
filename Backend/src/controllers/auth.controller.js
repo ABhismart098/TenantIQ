@@ -1,6 +1,6 @@
 const authService = require("../../services/auth/AuthService");
-const RegisterRequestDTO = require("../../src/dto/auth/register.dto");
-const LoginRequestDTO = require("../../src/dto/auth/login.dto");
+const RegisterRequestDTO = require("../dto/auth/register.dto");
+const LoginRequestDTO = require("../dto/auth/login.dto");
 const UserResponseDTO = require("../dto/Common/user.response.dto");
 
 

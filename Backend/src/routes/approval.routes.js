@@ -53,7 +53,7 @@ const approvalController = require("../controllers/approval.controller");
 
 /**
  * @swagger
- * /api/approve:
+ * /api/approve/action:
  *   post:
  *     summary: Approve or reject a user
  *     tags: [Approvals]

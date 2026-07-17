@@ -1,10 +1,13 @@
 FROM node:20-alpine AS build
 
+ARG EXPO_PUBLIC_API_URL=http://localhost:4000/api
+ENV EXPO_PUBLIC_API_URL=$EXPO_PUBLIC_API_URL
+
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
-RUN npx expo export --platform web
+RUN npx expo export --platform web --clear
 
 FROM nginx:1.27-alpine
 COPY --from=build /app/dist /usr/share/nginx/html

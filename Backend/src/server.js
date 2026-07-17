@@ -1,5 +1,6 @@
 const app = require("./app");
 const http = require("http");
+require("./config/env"); // Validate environment variables
 
 const PORT = process.env.PORT || 4000;
 
